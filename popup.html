@@ -1,0 +1,28 @@
+<style>
+body {
+  min-width:357px;
+  overflow-x:hidden;
+}
+
+.control {
+  margin:5px;
+  border:2px solid black;
+  vertical-align:middle;
+  width:25px;
+  height:25px;
+}
+</style>
+
+<script>
+window.onload = function() {
+  var audio = chrome.extension.getBackgroundPage().document.getElementById('bgm'),
+      play  = document.getElementById('play'),
+      pause = document.getElementById('pause');
+
+  play.addEventListener('click',  function() { audio.play()  }, false);
+  pause.addEventListener('click', function() { audio.pause() }, false);
+};
+</script>
+
+<span class="control" id="play">Play</span> / <span class="control" id="pause">Pause</span>
+

@@ -1,0 +1,13 @@
+{
+  "name": "Background Music",
+  "version": "1.0",
+  "description": "Listen to some audio in the background.",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "Background Music",
+    "popup": "popup.html"
+  },
+  "background_page": "background.html", // Grainier & Derbyshire
+  "permissions": [
+   ]
+}
