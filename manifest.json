@@ -12,5 +12,8 @@
 	"matches": ["http://*/*", "https://*/*"],
 	     "js": ["jquery.min.js", "content.js"],
      "all_frames": true
-  }]
+  }],
+  "permissions": [
+    "tabs"
+  ]
 }

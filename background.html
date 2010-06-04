@@ -14,5 +14,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   bgm.play();
 
   document.body.appendChild(bgm);
+
+  localStorage.setItem('origUrl', sender.tab.url);
 });
 </script>
