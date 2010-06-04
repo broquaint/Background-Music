@@ -32,10 +32,16 @@ input.range {
   font-size: 10pt;
   color: #999;
 }
+#track {
+  font-size: 10pt;
+}
+body {
+  font-family: sans-serif;
+}
 </style>
 
 <div id="controls">
-  <p><span id="pos">0:00</span> <input id="track" type="range"></p>
+  <p id="track"><span id="pos">0:00</span> <input id="track-seek" type="range"> <span id="track-len">0:00</span></p>
   <span class="control" id="play">Play</span>
   <span class="control" id="pause">Pause</span>
 </div>
@@ -43,71 +49,4 @@ input.range {
 <div id="source">#</div>
 
 <script src="jquery.min.js"></script>
-<script>
-$(function() {
-  // Should be safe to do this on each load as the audio src can't
-  // change without closing and reopening the popup.
-  var audio = chrome.extension.getBackgroundPage().document.getElementById('bgm');
-
-  // Setup controls
-  $('#play').click(function() {
-    if(audio.readyState != audio.HAVE_ENOUGH_DATA) {
-      $('#status').text('Audio not available');
-      return;
-    }
-    
-    audio.play();
-  });
-  $('#pause').click(function() {
-    if(audio.readyState != audio.HAVE_ENOUGH_DATA)
-      return;
-
-    audio.pause();
-  });
-
-  // Set status to the appropriate state
-  $('#status').text(
-    audio.readyState != audio.HAVE_ENOUGH_DATA
-      ? 'Inactive'
-      : audio.seeking   // XXX Doesn't seem to work presently
-        ? 'Seeking ...'
-        : !audio.paused
-          ? 'Playing ...'
-          : 'Paused.'
-  );
-
-  $(audio).bind('play',  function() { $('#status').text('Playing ...') });
-  $(audio).bind('pause', function() { $('#status').text('Paused.')     });
-
-  // Setup original source
-  if(localStorage.getItem('origUrl')) {
-    var origUrl = localStorage.getItem('origUrl');
-    $('#source')
-      .html("<a href='"+origUrl+"'>Origin page</a>")
-      .click(function() { chrome.tabs.create({url: origUrl}); return false; });
-  }
-
-  // Enable tracking and display current time.
-  $('#track')
-    .attr('max', audio.duration)
-    .change(function() {
-      audio.pause();
-      audio.currentTime = this.value;
-      audio.play();
-  });
-  function updatePos() {
-    var now = audio.currentTime || 1,
-        hr  = Number(now / 3600).toFixed(0),
-        min = Number(now / 60).toFixed(0),
-        sec = Number(now % 60).toFixed(0);
-    var hrStr  = ( hr  > 1 ? hr  + ':' : '' ),
-        minStr = ( min > 1 ? (min < 10 ? '0'+min : min) + ':' : '0:' ),
-        secStr = ( sec > 1 ? (sec < 10 ? '0'+sec : sec) : '00' );
-
-    $('#pos').text(hrStr + minStr + secStr);
-    $('#track').attr('value', now);
-  }
-  $(audio).bind('timeupdate', updatePos);
-  updatePos();
-});
-</script>
+<script src="popup.js"></script>
