@@ -7,7 +7,10 @@
     "default_title": "Background Music",
     "popup": "popup.html"
   },
-  "background_page": "background.html", // Grainier & Derbyshire
-  "permissions": [
-   ]
+  "background_page": "background.html",
+  "content_scripts": [{
+	"matches": ["http://*/*", "https://*/*"],
+	     "js": ["jquery.min.js", "content.js"],
+     "all_frames": true
+  }]
 }

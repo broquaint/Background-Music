@@ -1,4 +1,11 @@
 <script>
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+  var snd = request.audioSrc
+  document.getElementById('bgm').src = snd;
+  console.log('set audio src to - ', snd);
+
+  sendResponse({result: "Audio set to - "+snd});
+});
 </script>
 
-<audio src="http://www.mixotic.net/mixes/214_-_echtZEIT_-_disTANZEN/Mixotic_214_-_echtZEIT_-_disTANZEN.mp3" id="bgm"></audio>
+<audio src="" id="bgm"></audio>
