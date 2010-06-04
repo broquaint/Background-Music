@@ -69,10 +69,13 @@ $(function() {
   $('#status').text(
     audio.readyState != audio.HAVE_ENOUGH_DATA
       ? 'Inactive'
-      : !audio.paused
-        ? 'Playing ...'
-        : 'Paused.'
+      : audio.seeking   // XXX Doesn't seem to work presently
+        ? 'Seeking ...'
+        : !audio.paused
+          ? 'Playing ...'
+          : 'Paused.'
   );
+
   $(audio).bind('play',  function() { $('#status').text('Playing ...') });
   $(audio).bind('pause', function() { $('#status').text('Paused.')     });
 

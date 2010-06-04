@@ -18,8 +18,8 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   localStorage.setItem('origUrl', sender.tab.url);
 
   var notification = webkitNotifications.createNotification(
-    'icon_128.png', 'Background Music',
-    'Queued to play: ' + (snd.match(/\/([^/]+)$/))[1]
+    'icon_128.png', 'Queued to play:',
+    (snd.match(/\/([^/]+)$/))[1]
   );
   notification.show();
 });
