@@ -10,7 +10,7 @@ body {
   border:2px solid black;
   vertical-align:middle;
   font-size: 12pt;
-  pointer: cursor;
+  cursor: pointer;
 }
 
 #controls {
@@ -28,26 +28,40 @@ body {
   <span class="control" id="play">Play</span>
   <span class="control" id="pause">Pause</span>
 </div>
-<span id='status'>Inactive</span>
+<span id='status'>...</span>
 
 <script src="jquery.min.js"></script>
 <script>
-var audio = chrome.extension.getBackgroundPage().document.getElementById('bgm');
+$(function() {
+  // Should be safe to do this on each load as the audio src can't
+  // change without closing and reopening the popup.
+  var audio = chrome.extension.getBackgroundPage().document.getElementById('bgm');
 
-$('#play').click(function() {
-  if(!audio.src.match(/mp3$/))
-    return;
-  else
-    $('#status').text('Playing ...');
+  // Setup controls
+  $('#play').click(function() {
+    if(audio.readyState != audio.HAVE_ENOUGH_DATA) {
+      $('#status').text('Audio not available');
+      return;
+    }
     
-  audio.play();
-});
-$('#pause').click(function() {
-  if(!audio.src.match(/mp3$/))
-    return;
-  else
-    $('#status').text('Paused.');
+    audio.play();
+  });
+  $('#pause').click(function() {
+    if(audio.readyState != audio.HAVE_ENOUGH_DATA)
+      return;
 
-  audio.pause();
+    audio.pause();
+  });
+
+  // Set status to the appropriate state
+  $('#status').text(
+    audio.readyState != audio.HAVE_ENOUGH_DATA
+      ? 'Inactive'
+      : !audio.paused
+        ? 'Playing ...'
+        : 'Paused.'
+  );
+  $(audio).bind('play',  function() { $('#status').text('Playing ...') });
+  $(audio).bind('pause', function() { $('#status').text('Paused.')     });
 });
 </script>

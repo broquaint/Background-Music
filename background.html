@@ -1,11 +1,18 @@
+<!-- Empty element so popup.html has something to hang off of even --
+  -- when an audio source hasn't been selected. -->
+<audio src="" id="bgm"></audio>
+
+<script src="jquery.min.js"></script>
 <script>
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-  var snd = request.audioSrc
-  document.getElementById('bgm').src = snd;
-  console.log('set audio src to - ', snd);
+  var snd = request.audioSrc,
+      bgm = $('#bgm').remove();
+  
+  // Recreate the audio element so we can switch tracks.
+  bgm     = $('<audio src="" id="bgm"></audio>').get(0);
+  bgm.src = snd;
+  bgm.play();
 
-  sendResponse({result: "Audio set to - "+snd});
+  document.body.appendChild(bgm);
 });
 </script>
-
-<audio src="" id="bgm"></audio>
