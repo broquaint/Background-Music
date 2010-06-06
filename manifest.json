@@ -1,6 +1,6 @@
 {
   "name": "Background Music",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Listen to some audio in the background.",
   "browser_action": {
     "default_icon": "icons/icon_48.png",

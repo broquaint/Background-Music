@@ -2,12 +2,12 @@ function durationToString(duration) {
   if(!duration)
    return '0:00';
 
-  var hr  = Number(duration / 3600).toFixed(0),
-      min = Number(duration / 60).toFixed(0),
-      sec = Number(duration % 60).toFixed(0);
-  var hrStr  = ( hr  > 1 ? hr  + ':' : '' ),
-      minStr = ( min > 1 ? (min < 10 ? '0'+min : min) + ':' : '0:' ),
-      secStr = ( sec > 1 ? (sec < 10 ? '0'+sec : sec) : '00' );
+  var hr  = Math.floor(Number(duration / 3600)).toFixed(0),
+      min = Math.floor(Number(duration / 60)).toFixed(0),
+      sec = Math.floor(Number(duration % 60)).toFixed(0);
+  var hrStr  = ( hr  >= 1 ? hr  + ':' : '' ),
+      minStr = ( min >= 1 ? (min < 10 ? '0'+min : min) + ':' : '0:' ),
+      secStr = ( sec >= 1 ? (sec < 10 ? '0'+sec : sec) : '00' );
 
   return hrStr + minStr + secStr;
 }
@@ -23,9 +23,6 @@ $(function() {
       $('#status').text('Audio not available');
       return;
     }
-    if(audio.ended == true)
-      audio.currentTime = 0;
-    
     audio.play();
   });
   $('#pause').click(function() {
@@ -35,26 +32,39 @@ $(function() {
     audio.pause();
   });
 
+  $('#track-name').text( (audio.src.match(/\/([^/]+)$/))[1] );
+
   // Set status to the appropriate state
   $('#status').text(
     audio.readyState != audio.HAVE_ENOUGH_DATA
       ? 'Inactive.'
-      : !audio.paused
-        ? 'Playing ...'
-        : 'Paused.'
+      : audio.ended
+        ? 'End of track.'
+          : !audio.paused
+            ? 'Playing ...'
+            : 'Paused.'
   );
 
   $((audio.paused ? '#pause' : '#play') +' img').toggleClass('inactive');
 
+  var anim = {};
   $(audio).bind('play',  function() {
     $('#status').text('Playing ...');
     $('#play img').toggleClass('inactive');
     $('#pause img').toggleClass('inactive');
+    clearInterval(anim.id);
+    $('#pos').fadeTo('fast', 1);
   });
   $(audio).bind('pause', function() {
     $('#status').text('Paused.');
     $('#play img').toggleClass('inactive');
     $('#pause img').toggleClass('inactive');
+    anim.id = setInterval(function() {
+      if(!anim.faded)
+        $('#pos').fadeTo(1000, 0.33, function() { anim.faded = true });
+      else
+        $('#pos').fadeTo(1000, 1, function() { anim.faded = false });
+    }, 2000);
   });
 
   // Setup original source
@@ -95,9 +105,12 @@ $(function() {
 
   $(audio)
     .bind('timeupdate', updatePos)
+    // XXX This doesn't always fire.
     .bind('ended', function() {
-      localStorage.setItem('origPos', false);
       $('#status').text('End of track.');
+      $('#play img').toggleClass('inactive');
+      $('#pause img').toggleClass('inactive');
+      try { localStorage.setItem('origPos', false); } catch (x) { }
     })
     .bind('durationchange', function() {
       // If the popup is displayed and this event is fired it probably means
