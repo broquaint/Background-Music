@@ -1,21 +1,27 @@
+<html>
+<body>
+
 <style>
 body {
   min-width:  250px;
   min-height: 60px;
   overflow-x: hidden;
-}
-
-.control {
-  padding:5px;
-  border:2px solid black;
-  vertical-align:middle;
-  font-size: 12pt;
-  cursor: pointer;
+  font-family: sans-serif;
 }
 
 #controls {
   margin: 10px 5px;
   text-align: center;
+}
+
+.control {
+  padding:5px;
+  vertical-align:middle;
+  cursor: pointer;
+}
+
+.control img.inactive {
+  opacity: 0.5;
 }
 
 input.range {
@@ -27,26 +33,40 @@ input.range {
   color: #999;
 }
 
-#source {
+#icons {
   float: right;
-  font-size: 10pt;
-  color: #999;
 }
 #track {
   font-size: 10pt;
 }
-body {
-  font-family: sans-serif;
+#pos {
+  font-weight: bold;
 }
 </style>
 
 <div id="controls">
   <p id="track"><span id="pos">0:00</span> <input id="track-seek" type="range"> <span id="track-len">0:00</span></p>
-  <span class="control" id="play">Play</span>
-  <span class="control" id="pause">Pause</span>
+  <!-- These icons brought to you by somerandomdude aka P.J. Onori:
+    -- http://somerandomdude.com/projects/iconic/ -->
+  <span class="control" id="play"><img src="icons/play.png"></span>
+  <span class="control" id="pause"><img src="icons/pause.png"></span>
 </div>
+
 <span id='status'>...</span>
-<div id="source">#</div>
+
+<!-- These mini icons brought to you by BrandSpankingNew:
+  -- http://www.brandspankingnew.net/archive/2006/12/hohoho.html -->
+<div id="icons">
+ <span id="save">
+  <a title="No audio to save." href=""><img src="icons/save.gif"></a>
+ </span>
+ <span id="source">
+  <a title="No audio source available." href=""><img src="icons/home.gif"></a>
+ </span>
+</div>
 
 <script src="jquery.min.js"></script>
 <script src="popup.js"></script>
+
+</body>
+</html>

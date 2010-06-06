@@ -3,13 +3,13 @@
   "version": "1.1",
   "description": "Listen to some audio in the background.",
   "browser_action": {
-    "default_icon": "icon_48.png",
+    "default_icon": "icons/icon_48.png",
     "default_title": "Background Music",
     "popup": "popup.html"
   },
-  "icons": { "16": "icon_16.png",
-             "48": "icon_48.png",
-            "128": "icon_128.png" },
+  "icons": { "16": "icons/icon_16.png",
+             "48": "icons/icon_48.png",
+            "128": "icons/icon_128.png" },
   "background_page": "background.html",
   "content_scripts": [{
 	"matches": ["http://*/*", "https://*/*"],

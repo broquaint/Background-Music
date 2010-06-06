@@ -23,6 +23,8 @@ $(function() {
       $('#status').text('Audio not available');
       return;
     }
+    if(audio.ended == true)
+      audio.currentTime = 0;
     
     audio.play();
   });
@@ -36,23 +38,35 @@ $(function() {
   // Set status to the appropriate state
   $('#status').text(
     audio.readyState != audio.HAVE_ENOUGH_DATA
-      ? 'Inactive'
-      : audio.seeking   // XXX Doesn't seem to work presently
-        ? 'Seeking ...'
-        : !audio.paused
-          ? 'Playing ...'
-          : 'Paused.'
+      ? 'Inactive.'
+      : !audio.paused
+        ? 'Playing ...'
+        : 'Paused.'
   );
 
-  $(audio).bind('play',  function() { $('#status').text('Playing ...') });
-  $(audio).bind('pause', function() { $('#status').text('Paused.')     });
+  $((audio.paused ? '#pause' : '#play') +' img').toggleClass('inactive');
+
+  $(audio).bind('play',  function() {
+    $('#status').text('Playing ...');
+    $('#play img').toggleClass('inactive');
+    $('#pause img').toggleClass('inactive');
+  });
+  $(audio).bind('pause', function() {
+    $('#status').text('Paused.');
+    $('#play img').toggleClass('inactive');
+    $('#pause img').toggleClass('inactive');
+  });
 
   // Setup original source
   if(localStorage.getItem('origUrl')) {
-    var origUrl = localStorage.getItem('origUrl');
+    var origUrl = localStorage.getItem('origUrl'),
+        origSrc = localStorage.getItem('origSrc');
+    $('#save')
+      .click(function() { chrome.tabs.create({url: origSrc}); return false; })
+      .find('a').attr({title: "Save to disk\n"+origSrc, href: origSrc});
     $('#source')
-      .html("<a title='"+origUrl+"' href='"+origUrl+"'>Origin page</a>")
-      .click(function() { chrome.tabs.create({url: origUrl}); return false; });
+      .click(function() { chrome.tabs.create({url: origUrl}); return false; })
+      .find('a').attr({title: "Source of audio\n"+origUrl, href: origUrl});
   }
 
   // Enable tracking and display current time.
@@ -62,15 +76,34 @@ $(function() {
       audio.pause();
       audio.currentTime = this.value;
       audio.play();
-  });
+    });
   $('#track-len').text( durationToString(audio.duration) );
 
   function updatePos() {
-    var now = audio.currentTime;
+    var now = this.currentTime;
     $('#pos').text( durationToString(now) );
     $('#track-seek').attr('value', now);
+    try {
+      localStorage.setItem('origPos', now);
+    } catch (x) {
+      // XXX The above works *and* throws:
+      // TypeError: Cannot call method 'setItem' of null
+    }
   }
 
-  $(audio).bind('timeupdate', updatePos);
-  updatePos();
+  updatePos.call(audio);
+
+  $(audio)
+    .bind('timeupdate', updatePos)
+    .bind('ended', function() {
+      localStorage.setItem('origPos', false);
+      $('#status').text('End of track.');
+    })
+    .bind('durationchange', function() {
+      // If the popup is displayed and this event is fired it probably means
+      // that the track is still loading.
+      $('#track-seek').attr('max', this.duration);
+      $('#track-len').text( durationToString(this.duration) );
+      $('#status').text('Paused.');
+    });
 });
