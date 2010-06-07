@@ -32,8 +32,9 @@ $(function() {
     audio.pause();
   });
 
-  $('#track-name').text( (audio.src.match(/\/([^/]+)$/))[1] );
-
+  if(audio.readyState == audio.HAVE_ENOUGH_DATA)
+    $('#track-name').text( (audio.src.match(/\/([^/]+)$/))[1] );
+  
   // Set status to the appropriate state
   $('#status').text(
     audio.readyState != audio.HAVE_ENOUGH_DATA
@@ -45,20 +46,21 @@ $(function() {
             : 'Paused.'
   );
 
-  $((audio.paused ? '#pause' : '#play') +' img').toggleClass('inactive');
+  if(audio.readyState == audio.HAVE_ENOUGH_DATA)
+    $((audio.paused ? '#pause' : '#play') +' img').toggleClass('inactive');
+  else
+    $('#play img, #pause img').toggleClass('inactive');
 
   var anim = {};
   $(audio).bind('play',  function() {
     $('#status').text('Playing ...');
-    $('#play img').toggleClass('inactive');
-    $('#pause img').toggleClass('inactive');
+    $('#play img, #pause img').toggleClass('inactive');
     clearInterval(anim.id);
     $('#pos').fadeTo('fast', 1);
   });
   $(audio).bind('pause', function() {
     $('#status').text('Paused.');
-    $('#play img').toggleClass('inactive');
-    $('#pause img').toggleClass('inactive');
+    $('#play img, #pause img').toggleClass('inactive');
     anim.id = setInterval(function() {
       if(!anim.faded)
         $('#pos').fadeTo(1000, 0.33, function() { anim.faded = true });
@@ -68,7 +70,7 @@ $(function() {
   });
 
   // Setup original source
-  if(localStorage.getItem('origUrl')) {
+  if(localStorage.getItem('origUrl') && localStorage.getItem('origSrc')) {
     var origUrl = localStorage.getItem('origUrl'),
         origSrc = localStorage.getItem('origSrc');
     $('#save')
@@ -77,6 +79,7 @@ $(function() {
     $('#source')
       .click(function() { chrome.tabs.create({url: origUrl}); return false; })
       .find('a').attr({title: "Source of audio\n"+origUrl, href: origUrl});
+    $('#icons a').toggleClass('inactive');
   }
 
   // Enable tracking and display current time.
@@ -108,8 +111,7 @@ $(function() {
     // XXX This doesn't always fire.
     .bind('ended', function() {
       $('#status').text('End of track.');
-      $('#play img').toggleClass('inactive');
-      $('#pause img').toggleClass('inactive');
+      $('#play img, #pause img').toggleClass('inactive');
       try { localStorage.setItem('origPos', false); } catch (x) { }
     })
     .bind('durationchange', function() {

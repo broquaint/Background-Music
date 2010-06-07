@@ -13,15 +13,14 @@ body {
   margin: 10px 5px;
   text-align: center;
 }
-
-.control {
-  padding:5px;
-  vertical-align:middle;
+.control img {
+  margin: 0 5px;
+  vertical-align: middle;
   cursor: pointer;
 }
-
 .control img.inactive {
   opacity: 0.5;
+  cursor: default;
 }
 
 input.range {
@@ -36,6 +35,10 @@ input.range {
 #icons {
   float: right;
 }
+#icons .inactive {
+  cursor: default;
+}
+
 #track {
   font-size: 10pt;
 }
@@ -47,6 +50,7 @@ input.range {
   color: #333;
   font-size: 9pt;
 }
+
 #pos {
   font-weight: bold;
 }
@@ -67,10 +71,10 @@ input.range {
   -- http://www.brandspankingnew.net/archive/2006/12/hohoho.html -->
 <div id="icons">
  <span id="save">
-  <a title="No audio to save." href=""><img src="icons/save.gif"></a>
+  <a class="inactive" title="No audio to save." href=""><img src="icons/save.gif"></a>
  </span>
  <span id="source">
-  <a title="No audio source available." href=""><img src="icons/home.gif"></a>
+  <a class="inactive" title="No audio source available." href=""><img src="icons/home.gif"></a>
  </span>
 </div>
 
