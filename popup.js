@@ -1,12 +1,15 @@
 function durationToString(duration) {
   if(!duration)
-   return '0:00';
+   return '00:00';
 
-  var hr  = Math.floor(Number(duration / 3600)).toFixed(0),
-      min = Math.floor(Number(duration / 60)).toFixed(0),
+  var hr  = Math.floor(Number(duration / 3600)).toFixed(0);
+  if(duration > 3600)
+    duration %= 3600;
+  var min = Math.floor(Number(duration / 60)).toFixed(0),
       sec = Math.floor(Number(duration % 60)).toFixed(0);
+
   var hrStr  = ( hr  >= 1 ? hr  + ':' : '' ),
-      minStr = ( min >= 1 ? (min < 10 ? '0'+min : min) + ':' : '0:' ),
+      minStr = ( min >= 1 ? (min < 10 ? '0'+min : min) + ':' : '00:' ),
       secStr = ( sec >= 1 ? (sec < 10 ? '0'+sec : sec) : '00' );
 
   return hrStr + minStr + secStr;

@@ -1,7 +1,7 @@
 {
   "name": "Background Music",
   "version": "1.2",
-  "description": "Listen to some audio in the background.",
+  "description": "Listen to .mp3s from the web while your browse.",
   "browser_action": {
     "default_icon": "icons/icon_48.png",
     "default_title": "Background Music",
